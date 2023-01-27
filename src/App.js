@@ -240,6 +240,15 @@ export default function App() {
     updateModifications(true);
   };
 
+  const handleFill = () => {
+    let activeObject = canvasRef.current.getActiveObject();
+    if (activeObject) {
+      activeObject.set("fill", activeObject.stroke);
+    }
+    canvasRef.current.renderAll();
+    updateModifications(true);
+  };
+
   return (
     <div className="App">
       <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -279,6 +288,7 @@ export default function App() {
             </div>
           )}
         </button>
+        <button onClick={handleFill}>Fill</button>
         <button
           onClick={() => {
             if (canvasRef.current.getActiveObject().get("type") === "textbox") {
