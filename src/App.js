@@ -13,6 +13,9 @@ var rotateIcon =
 var rotateimg = document.createElement("img");
 rotateimg.src = rotateIcon;
 
+var state = [];
+var mods = 0;
+
 export default function App() {
   const canvasRef = useRef(null);
 
@@ -31,8 +34,47 @@ export default function App() {
         width: 1280,
         backgroundColor: "gray"
       });
+      canvasRef.current.on(
+        "object:modified",
+        () => {
+          updateModifications(true);
+        },
+        "object:added",
+        () => {
+          updateModifications(true);
+        }
+      );
     }
   }, []);
+
+  function updateModifications(savehistory) {
+    if (savehistory === true) {
+      let myjson = JSON.stringify(canvasRef.current);
+      state.push(myjson);
+    }
+  }
+
+  const undo = function undo() {
+    if (mods < state.length) {
+      canvasRef.current.remove(...canvasRef.current.getObjects());
+      canvasRef.current.loadFromJSON(state[state.length - 1 - mods - 1]);
+      canvasRef.current.renderAll();
+      mods += 1;
+    }
+  };
+
+  const redo = function redo() {
+    if (mods > 0) {
+      canvasRef.current.remove(...canvasRef.current.getObjects());
+      canvasRef.current.loadFromJSON(state[state.length - 1 - mods + 1]);
+      canvasRef.current.renderAll();
+      mods -= 1;
+    }
+  };
+
+  const clearAll = function clearcan() {
+    canvasRef.current.remove(...canvasRef.current.getObjects());
+  };
 
   const addBox = () => {
     if (canvasRef.current) {
@@ -55,6 +97,7 @@ export default function App() {
       box.setCoords();
 
       canvasRef.current.renderAll();
+      updateModifications(true);
     }
   };
 
@@ -78,6 +121,7 @@ export default function App() {
       circle.setCoords();
 
       canvasRef.current.renderAll();
+      updateModifications(true);
     }
   };
 
@@ -105,6 +149,7 @@ export default function App() {
     arrow.setCoords();
 
     canvasRef.current.renderAll();
+    updateModifications(true);
   }
 
   function addTextBox() {
@@ -122,6 +167,7 @@ export default function App() {
     text.setCoords();
 
     canvasRef.current.renderAll();
+    updateModifications(true);
   }
 
   function renderDeleteIcon(ctx, left, top, styleOverride, fabricObject) {
@@ -182,6 +228,7 @@ export default function App() {
         activeObject.set("stroke", color.hex);
       }
       canvasRef.current.renderAll();
+      updateModifications(true);
     }
   };
 
@@ -192,6 +239,7 @@ export default function App() {
       activeObject.set("fontSize", Number(e.target.value));
     }
     canvasRef.current.renderAll();
+    updateModifications(true);
   };
 
   return (
@@ -239,6 +287,9 @@ export default function App() {
             </div>
           )}
         </button>
+        <button onClick={() => undo()}>Undo</button>
+        <button onClick={() => redo()}>Redo</button>
+        <button onClick={() => clearAll()}>Reset</button>
       </div>
 
       <canvas id="canvas" />
