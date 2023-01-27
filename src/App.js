@@ -49,7 +49,7 @@ export default function App() {
         if (activeObject) {
           menuRef.current.style.display = "flex";
           menuRef.current.style.top = `${activeObject.top}px`;
-          menuRef.current.style.left = `${activeObject.left+200}px`;
+          menuRef.current.style.left = `${activeObject.left - 150}px`;
         } else {
           menuRef.current.style.display = "none";
         }
