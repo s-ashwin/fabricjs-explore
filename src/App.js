@@ -261,6 +261,21 @@ export default function App() {
     updateModifications(true);
   };
 
+  const handleStyle = () => {
+    let activeObject = canvasRef.current.getActiveObject();
+    if (activeObject) {
+      if (activeObject.get("type") === "group") {
+        activeObject._objects.map((obj) => {
+          obj.set("strokeDashArray", [5, 5]);
+        });
+      } else {
+        activeObject.set("strokeDashArray", [5, 5]);
+      }
+    }
+    canvasRef.current.renderAll();
+    updateModifications(true);
+  };
+
   return (
     <div className="App">
       <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -301,6 +316,7 @@ export default function App() {
           )}
         </button>
         <button onClick={handleFill}>Fill</button>
+        <button onClick={handleStyle}>Switch style</button>
         <button
           onClick={() => {
             if (canvasRef.current.getActiveObject().get("type") === "textbox") {
