@@ -255,7 +255,13 @@ export default function App() {
     setThickness(e.target.value);
     let activeObject = canvasRef.current.getActiveObject();
     if (activeObject) {
-      activeObject.set("strokeWidth", Number(e.target.value));
+      if (activeObject.get("type") === "group") {
+        activeObject._objects.map((obj) => {
+          obj.set("strokeWidth", Number(e.target.value));
+        });
+      } else {
+        activeObject.set("strokeWidth", Number(e.target.value));
+      }
     }
     canvasRef.current.renderAll();
     updateModifications(true);
