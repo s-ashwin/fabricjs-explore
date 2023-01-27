@@ -18,6 +18,7 @@ var mods = 0;
 
 export default function App() {
   const canvasRef = useRef(null);
+  const menuRef = useRef(null);
 
   const [drawingMode, setDrawingMode] = useState(false);
   const [highlightMode, setHighlightMode] = useState(false);
@@ -41,6 +42,16 @@ export default function App() {
       canvasRef.current.on("object:added", (e) => {
         if (e.target.type === "path") {
           updateModifications(true);
+        }
+      });
+      canvasRef.current.on("mouse:up", (e) => {
+        let activeObject = canvasRef.current.getActiveObject();
+        if (activeObject) {
+          menuRef.current.style.display = "flex";
+          menuRef.current.style.top = `${activeObject.top}px`;
+          menuRef.current.style.left = `${activeObject.left+200}px`;
+        } else {
+          menuRef.current.style.display = "none";
         }
       });
     }
@@ -309,8 +320,24 @@ export default function App() {
           Highlighter {highlightMode ? "(Enabled)" : "(Disabled)"}
         </button>
         <button onClick={addTextBox}>Add text</button>
-        <button onClick={() => setColorMode(!colorMode)}>
-          Color
+        <button onClick={undo}>Undo</button>
+        <button onClick={redo}>Redo</button>
+        <button onClick={clearAll}>Reset</button>
+      </div>
+
+      <div
+        ref={menuRef}
+        style={{
+          zIndex: 5,
+          background: "wheat",
+          padding: 10,
+          gap: "0.5rem",
+          position: "absolute",
+          display: "none"
+        }}
+      >
+        <div style={{ zIndex: 5 }}>
+          <button onClick={() => setColorMode(!colorMode)}>Color</button>
           {colorMode && (
             <div style={{ position: "absolute", zIndex: 5 }}>
               <SketchPicker
@@ -320,9 +347,7 @@ export default function App() {
               />
             </div>
           )}
-        </button>
-        <button onClick={handleFill}>Fill</button>
-        <button onClick={handleStyle}>Switch style</button>
+        </div>
         <div style={{ zIndex: 5 }}>
           <button
             onClick={() => {
@@ -359,10 +384,8 @@ export default function App() {
             </div>
           )}
         </div>
-
-        <button onClick={() => undo()}>Undo</button>
-        <button onClick={() => redo()}>Redo</button>
-        <button onClick={() => clearAll()}>Reset</button>
+        <button onClick={handleFill}>Fill</button>
+        <button onClick={handleStyle}>Switch style</button>
       </div>
 
       <canvas id="canvas" />
