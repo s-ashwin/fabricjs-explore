@@ -1,6 +1,7 @@
 import "./styles.css";
 import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
+import { SketchPicker } from "react-color";
 
 var deleteIcon =
   "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
@@ -16,6 +17,12 @@ export default function App() {
   const canvasRef = useRef(null);
 
   const [drawingMode, setDrawingMode] = useState(false);
+
+  const [selectedColor, setSelectedColor] = useState("red");
+  const [colorMode, setColorMode] = useState(false);
+
+  const [fontMode, setFontMode] = useState(false);
+  const [fontSize, setFontSize] = useState(20);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -159,9 +166,37 @@ export default function App() {
     cornerSize: 24
   });
 
+  const handleColorChange = (color) => {
+    setSelectedColor(color.hex);
+    let activeObject = canvasRef.current.getActiveObject();
+    if (activeObject) {
+      if (activeObject.get("type") === "textbox") {
+        activeObject.set("stroke", color.hex);
+        activeObject.set("fill", color.hex);
+      } else if (activeObject.get("type") === "group") {
+        activeObject._objects.map((obj) => {
+          obj.set("stroke", color.hex);
+          obj.set("fill", color.hex);
+        });
+      } else {
+        activeObject.set("stroke", color.hex);
+      }
+      canvasRef.current.renderAll();
+    }
+  };
+
+  const handleFontSizeChange = (e) => {
+    let activeObject = canvasRef.current.getActiveObject();
+    setFontSize(e.target.value);
+    if (activeObject.get("type") === "textbox") {
+      activeObject.set("fontSize", Number(e.target.value));
+    }
+    canvasRef.current.renderAll();
+  };
+
   return (
     <div className="App">
-      <div>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
         <button onClick={addCircle}>Add circle</button>
         <button onClick={addBox}>Add rectangle</button>
         <button onClick={addArrow}>Add arrow</button>
@@ -174,6 +209,36 @@ export default function App() {
           Free pen {drawingMode ? "(Enabled)" : "(Disabled)"}
         </button>
         <button onClick={addTextBox}>Add text</button>
+        <button onClick={() => setColorMode(!colorMode)}>
+          Color
+          {colorMode && (
+            <div style={{ position: "absolute", zIndex: 5 }}>
+              <SketchPicker
+                style={{ position: "absolute" }}
+                color={selectedColor}
+                onChangeComplete={handleColorChange}
+              />
+            </div>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            if (canvasRef.current.getActiveObject().get("type") === "textbox") {
+              setFontMode(!fontMode);
+            }
+          }}
+        >
+          Font size
+          {fontMode && (
+            <div style={{ position: "absolute" }}>
+              <input
+                value={fontSize}
+                onChange={handleFontSizeChange}
+                type="number"
+              ></input>
+            </div>
+          )}
+        </button>
       </div>
 
       <canvas id="canvas" />
