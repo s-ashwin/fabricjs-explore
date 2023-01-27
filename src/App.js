@@ -35,16 +35,12 @@ export default function App() {
         width: 1280,
         backgroundColor: "gray"
       });
-      canvasRef.current.on(
-        "object:modified",
-        () => {
-          updateModifications(true);
-        },
-        "object:added",
-        () => {
-          updateModifications(true);
-        }
-      );
+      canvasRef.current.on("object:modified", () => {
+        updateModifications(true);
+      });
+      canvasRef.current.on("object:added", () => {
+        updateModifications(true);
+      });
     }
   }, []);
 
