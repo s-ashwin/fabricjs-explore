@@ -28,6 +28,9 @@ export default function App() {
   const [fontMode, setFontMode] = useState(false);
   const [fontSize, setFontSize] = useState(20);
 
+  const [thicknessMode, setThicknessMode] = useState(false);
+  const [thickness, setThickness] = useState(3);
+
   useEffect(() => {
     if (!canvasRef.current) {
       canvasRef.current = new fabric.Canvas("canvas", {
@@ -249,6 +252,16 @@ export default function App() {
     updateModifications(true);
   };
 
+  const handleThickness = (e) => {
+    setThickness(e.target.value);
+    let activeObject = canvasRef.current.getActiveObject();
+    if (activeObject) {
+      activeObject.set("strokeWidth", Number(e.target.value));
+    }
+    canvasRef.current.renderAll();
+    updateModifications(true);
+  };
+
   return (
     <div className="App">
       <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -302,6 +315,18 @@ export default function App() {
               <input
                 value={fontSize}
                 onChange={handleFontSizeChange}
+                type="number"
+              ></input>
+            </div>
+          )}
+        </button>
+        <button onClick={() => setThicknessMode(!thicknessMode)}>
+          Thickness
+          {thicknessMode && (
+            <div style={{ position: "absolute" }}>
+              <input
+                value={thickness}
+                onChange={handleThickness}
                 type="number"
               ></input>
             </div>
