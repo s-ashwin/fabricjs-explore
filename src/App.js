@@ -38,6 +38,11 @@ export default function App() {
         width: 1280,
         backgroundColor: "gray"
       });
+      canvasRef.current.on("object:added", (e) => {
+        if (e.target.type === "path") {
+          updateModifications(true);
+        }
+      });
     }
   }, []);
 
