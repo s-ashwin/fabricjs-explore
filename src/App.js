@@ -20,6 +20,7 @@ export default function App() {
   const canvasRef = useRef(null);
 
   const [drawingMode, setDrawingMode] = useState(false);
+  const [highlightMode, setHighlightMode] = useState(false);
 
   const [selectedColor, setSelectedColor] = useState("red");
   const [colorMode, setColorMode] = useState(false);
@@ -253,9 +254,21 @@ export default function App() {
           onClick={() => {
             canvasRef.current.isDrawingMode = !canvasRef.current.isDrawingMode;
             setDrawingMode(!drawingMode);
+            canvasRef.current.freeDrawingBrush.width = 4;
+            canvasRef.current.freeDrawingBrush.color = "rgb(0,0,0)";
           }}
         >
           Free pen {drawingMode ? "(Enabled)" : "(Disabled)"}
+        </button>
+        <button
+          onClick={() => {
+            canvasRef.current.isDrawingMode = !canvasRef.current.isDrawingMode;
+            setHighlightMode(!highlightMode);
+            canvasRef.current.freeDrawingBrush.width = 25;
+            canvasRef.current.freeDrawingBrush.color = "rgba(255,255,0,.35)";
+          }}
+        >
+          Highlighter {highlightMode ? "(Enabled)" : "(Disabled)"}
         </button>
         <button onClick={addTextBox}>Add text</button>
         <button onClick={() => setColorMode(!colorMode)}>
