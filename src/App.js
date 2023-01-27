@@ -323,14 +323,18 @@ export default function App() {
         </button>
         <button onClick={handleFill}>Fill</button>
         <button onClick={handleStyle}>Switch style</button>
-        <button
-          onClick={() => {
-            if (canvasRef.current.getActiveObject().get("type") === "textbox") {
-              setFontMode(!fontMode);
-            }
-          }}
-        >
-          Font size
+        <div style={{ zIndex: 5 }}>
+          <button
+            onClick={() => {
+              if (
+                canvasRef.current.getActiveObject().get("type") === "textbox"
+              ) {
+                setFontMode(!fontMode);
+              }
+            }}
+          >
+            Font size
+          </button>
           {fontMode && (
             <div style={{ position: "absolute" }}>
               <input
@@ -340,9 +344,11 @@ export default function App() {
               ></input>
             </div>
           )}
-        </button>
-        <button onClick={() => setThicknessMode(!thicknessMode)}>
-          Thickness
+        </div>
+        <div style={{ zIndex: 5 }}>
+          <button onClick={() => setThicknessMode(!thicknessMode)}>
+            Thickness
+          </button>
           {thicknessMode && (
             <div style={{ position: "absolute" }}>
               <input
@@ -352,7 +358,8 @@ export default function App() {
               ></input>
             </div>
           )}
-        </button>
+        </div>
+
         <button onClick={() => undo()}>Undo</button>
         <button onClick={() => redo()}>Redo</button>
         <button onClick={() => clearAll()}>Reset</button>
