@@ -207,6 +207,7 @@ export default function App() {
     cursorStyle: "pointer",
     mouseUpHandler: () => {
       canvasRef.current.remove(canvasRef.current.getActiveObject());
+      updateModifications(true);
     },
     render: renderDeleteIcon,
     cornerSize: 24
